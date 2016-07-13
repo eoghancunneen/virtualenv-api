@@ -1,6 +1,7 @@
 from os import linesep, environ
 import os.path
 import subprocess
+import sys
 
 from virtualenvapi.util import split_package_name
 from virtualenvapi.exceptions import VirtualenvCreationException, PackageInstallationException, PackageRemovalException
@@ -25,6 +26,8 @@ class VirtualEnvironment(object):
     @property
     def _pip_rpath(self):
         """The relative path (from environment root) to pip."""
+        if sys.platform == 'win32':
+            return os.path.join('Scripts', 'pip.exe')
         return os.path.join('bin', 'pip')
 
     @property
@@ -117,7 +120,7 @@ class VirtualEnvironment(object):
         If `force` is True, force an installation. If `upgrade` is True,
         attempt to upgrade the package in question. If both `force` and
         `upgrade` are True, reinstall the package and its dependencies."""
-        
+
         if not isinstance(options, list):
             raise ValueError("Options must be a list of strings.")
         if upgrade:
